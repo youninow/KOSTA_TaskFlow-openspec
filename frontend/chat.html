@@ -91,8 +91,10 @@
 
     function renderAll(msgs) {
       const list = document.getElementById('messageList');
-      list.innerHTML = '';
       const empty = document.getElementById('emptyState');
+      // emptyState를 먼저 떼어낸 후 innerHTML 초기화 (null 참조 방지)
+      if (empty.parentNode) empty.parentNode.removeChild(empty);
+      list.innerHTML = '';
       if (msgs.length === 0) { empty.classList.remove('hidden'); list.appendChild(empty); return; }
       empty.classList.add('hidden');
       msgs.forEach(m => list.appendChild(buildBubble(m)));
@@ -102,7 +104,7 @@
 
     function appendMessage(m) {
       const empty = document.getElementById('emptyState');
-      empty.classList.add('hidden');
+      if (empty) empty.classList.add('hidden');
       document.getElementById('messageList').appendChild(buildBubble(m));
       lastCreatedAt = m.created_at;
     }
