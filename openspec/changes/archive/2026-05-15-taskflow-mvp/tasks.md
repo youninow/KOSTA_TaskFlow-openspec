@@ -86,9 +86,9 @@
 
 ## 11. 배포
 
-- [ ] 11.1 Neon PostgreSQL 프로젝트 생성, 연결 문자열 확보
+- [x] 11.1 Neon PostgreSQL 프로젝트 생성, 연결 문자열 확보
 - [x] 11.2 `vercel.json` 또는 `vercel.ts` 작성: `/api/*` → `api/index.py` 라우팅
-- [ ] 11.3 Vercel 프로젝트 생성 + GitHub 연동
-- [ ] 11.4 Vercel 환경변수 설정: `DATABASE_URL`, `JWT_SECRET`
-- [ ] 11.5 `git push origin main` → 자동 배포 확인
-- [ ] 11.6 운영 URL에서 회원가입 → 팀 생성 → 칸반 → 채팅 전 기능 동작 확인
+- [x] 11.3 Vercel 프로젝트 생성 + GitHub 연동
+- [x] 11.4 Vercel 환경변수 설정: `DATABASE_URL`, `JWT_SECRET`
+- [x] 11.5 `git push origin main` → 자동 배포 확인
+- [x] 11.6 운영 URL에서 회원가입 → 팀 생성 → 칸반 → 채팅 전 기능 동작 확인
