@@ -71,6 +71,7 @@
         <div id="addCard-TODO" class="hidden mt-2 bg-white border-2 border-teal-400 rounded-lg p-3 space-y-2">
           <input id="addTitle-TODO" type="text" placeholder="태스크 제목" maxlength="100"
             class="w-full text-sm border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal-400"/>
+          <select id="addAssignee-TODO" class="w-full text-sm border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal-400 text-gray-700"></select>
           <p class="text-xs text-gray-400">Enter: 저장 · Esc: 취소</p>
         </div>
       </div>
@@ -89,6 +90,7 @@
         <div id="addCard-DOING" class="hidden mt-2 bg-white border-2 border-teal-400 rounded-lg p-3 space-y-2">
           <input id="addTitle-DOING" type="text" placeholder="태스크 제목" maxlength="100"
             class="w-full text-sm border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal-400"/>
+          <select id="addAssignee-DOING" class="w-full text-sm border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal-400 text-gray-700"></select>
           <p class="text-xs text-gray-400">Enter: 저장 · Esc: 취소</p>
         </div>
       </div>
@@ -107,6 +109,7 @@
         <div id="addCard-DONE" class="hidden mt-2 bg-white border-2 border-teal-400 rounded-lg p-3 space-y-2">
           <input id="addTitle-DONE" type="text" placeholder="태스크 제목" maxlength="100"
             class="w-full text-sm border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal-400"/>
+          <select id="addAssignee-DONE" class="w-full text-sm border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal-400 text-gray-700"></select>
           <p class="text-xs text-gray-400">Enter: 저장 · Esc: 취소</p>
         </div>
       </div>
@@ -132,7 +135,7 @@
         </div>
         <div class="flex items-center gap-3">
           <span class="text-gray-500 w-16">담당자</span>
-          <span id="modalAssignee" class="text-gray-700"></span>
+          <select id="modalAssignee" class="flex-1 text-sm border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal-400 text-gray-700"></select>
         </div>
         <div class="flex items-center gap-3">
           <span class="text-gray-500 w-16">생성자</span>
@@ -182,7 +185,15 @@
     function memberEmail(id) {
       if (!id) return '미할당';
       const m = members.find(m => m.id === id);
-      return m ? (m.id === user.id ? '@me' : m.email.split('@')[0]) : `#${id}`;
+      return m ? (m.id === user.id ? '@me' : m.email) : `#${id}`;
+    }
+
+    function buildMemberOptions(selectedId) {
+      const opts = members.map(m =>
+        `<option value="${m.id}" ${m.id === selectedId ? 'selected' : ''}>${m.id === user.id ? '@me (' + m.email + ')' : m.email}</option>`
+      );
+      opts.push(`<option value="" ${!selectedId ? 'selected' : ''}>미할당</option>`);
+      return opts.join('');
     }
 
     function renderBoard() {
@@ -243,15 +254,18 @@
       const box = document.getElementById(`addCard-${status}`);
       box.classList.toggle('hidden');
       const inp = document.getElementById(`addTitle-${status}`);
+      const sel = document.getElementById(`addAssignee-${status}`);
       inp.value = '';
+      sel.innerHTML = buildMemberOptions(user.id);
       inp.focus();
       inp.onkeydown = async (e) => {
         if (e.key === 'Enter') {
           const title = inp.value.trim();
           if (!title) return;
-          const res = await apiFetch(`/teams/${teamId}/tasks`, { method: 'POST', body: JSON.stringify({ title, assignee_id: user.id }) });
-          if (res?.ok) { box.classList.add('hidden'); loadTasks(); }
-        } else if (e.key === 'Escape') { box.classList.add('hidden'); }
+          const assignee_id = sel.value ? parseInt(sel.value) : null;
+          const res = await apiFetch(`/teams/${teamId}/tasks`, { method: 'POST', body: JSON.stringify({ title, assignee_id }) });
+          if (res?.ok) { box.classList.add('hidden'); sel.innerHTML = ''; loadTasks(); }
+        } else if (e.key === 'Escape') { box.classList.add('hidden'); sel.innerHTML = ''; }
       };
     }
 
@@ -260,7 +274,7 @@
       modalTask = { ...t };
       document.getElementById('modalTaskId').textContent = `#${t.id}`;
       document.getElementById('modalTitle').value = t.title;
-      document.getElementById('modalAssignee').textContent = memberEmail(t.assignee_id);
+      document.getElementById('modalAssignee').innerHTML = buildMemberOptions(t.assignee_id);
       document.getElementById('modalCreator').textContent = memberEmail(t.creator_id);
       document.getElementById('modalCreatedAt').textContent = new Date(t.created_at).toLocaleString('ko-KR');
       setModalStatus(t.status);
@@ -281,8 +295,10 @@
     async function saveModal() {
       const title = document.getElementById('modalTitle').value.trim();
       if (!title) return;
+      const selVal = document.getElementById('modalAssignee').value;
+      const assignee_id = selVal ? parseInt(selVal) : null;
       const [r1, r2] = await Promise.all([
-        apiFetch(`/tasks/${modalTask.id}`, { method: 'PUT', body: JSON.stringify({ title }) }),
+        apiFetch(`/tasks/${modalTask.id}`, { method: 'PUT', body: JSON.stringify({ title, assignee_id }) }),
         apiFetch(`/tasks/${modalTask.id}/status`, { method: 'PATCH', body: JSON.stringify({ status: modalTask.status }) }),
       ]);
       if (r1?.ok && r2?.ok) { closeModal(); loadTasks(); }
