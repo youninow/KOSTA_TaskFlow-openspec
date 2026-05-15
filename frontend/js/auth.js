@@ -14,14 +14,14 @@ async function apiFetch(path, options = {}) {
   const res = await fetch(API + path, { ...options, headers });
   if (res.status === 401) {
     removeToken(); removeUser();
-    window.location.href = '/static/login.html';
+    window.location.href = 'login.html';
     return;
   }
   return res;
 }
 
 function requireAuth() {
-  if (!getToken()) { window.location.href = '/static/login.html'; }
+  if (!getToken()) { window.location.href = 'login.html'; }
 }
 
 function showError(elId, message) {

@@ -58,11 +58,11 @@
     </div>
   </div>
 
-  <script src="/static/js/auth.js"></script>
+  <script src="js/auth.js"></script>
   <script>
     requireAuth();
     const user = getUser();
-    if (user?.team_id) window.location.href = '/static/kanban.html';
+    if (user?.team_id) window.location.href = 'kanban.html';
     document.getElementById('userEmail').textContent = user?.email || '';
 
     let createdTeamId = null;
@@ -98,7 +98,7 @@
       const data = await res.json();
       if (res.ok) {
         const u = getUser(); u.team_id = data.team.id; setUser(u);
-        window.location.href = '/static/kanban.html';
+        window.location.href = 'kanban.html';
       } else {
         showError('joinErr', data.error?.message || '합류에 실패했습니다');
       }
@@ -109,12 +109,12 @@
       navigator.clipboard.writeText(code).then(() => alert('초대코드가 복사됐습니다: ' + code));
     }
 
-    function goKanban() { window.location.href = '/static/kanban.html'; }
+    function goKanban() { window.location.href = 'kanban.html'; }
 
     async function doLogout() {
       await apiFetch('/auth/logout', { method: 'POST' });
       removeToken(); removeUser();
-      window.location.href = '/static/login.html';
+      window.location.href = 'login.html';
     }
   </script>
 </body>

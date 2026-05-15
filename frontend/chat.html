@@ -13,9 +13,9 @@
       <button id="menuBtn" class="md:hidden text-gray-500 text-xl">☰</button>
     </div>
     <nav class="hidden md:flex gap-2">
-      <a href="/static/kanban.html" class="px-4 py-1.5 border rounded text-sm font-medium text-gray-600 hover:bg-gray-50">칸반</a>
-      <a href="/static/chat.html" class="px-4 py-1.5 bg-teal-600 text-white rounded text-sm font-medium">채팅</a>
-      <a href="/static/members.html" class="px-4 py-1.5 border rounded text-sm font-medium text-gray-600 hover:bg-gray-50">멤버</a>
+      <a href="kanban.html" class="px-4 py-1.5 border rounded text-sm font-medium text-gray-600 hover:bg-gray-50">칸반</a>
+      <a href="chat.html" class="px-4 py-1.5 bg-teal-600 text-white rounded text-sm font-medium">채팅</a>
+      <a href="members.html" class="px-4 py-1.5 border rounded text-sm font-medium text-gray-600 hover:bg-gray-50">멤버</a>
     </nav>
     <div class="hidden md:flex items-center gap-3">
       <span id="pollStatus" class="text-xs text-green-500">● 5초마다 새로고침</span>
@@ -28,9 +28,9 @@
   <div id="mobileMenu" class="hidden fixed inset-0 z-50">
     <div class="absolute inset-0 bg-black/40" onclick="closeMobileMenu()"></div>
     <div class="absolute right-0 top-0 h-full w-64 bg-white shadow-xl p-6 flex flex-col gap-4">
-      <a href="/static/kanban.html" class="flex items-center gap-3 text-gray-600">📋 칸반</a>
-      <a href="/static/chat.html" class="flex items-center gap-3 text-teal-600 font-medium">💬 채팅</a>
-      <a href="/static/members.html" class="flex items-center gap-3 text-gray-600">👥 팀 멤버</a>
+      <a href="kanban.html" class="flex items-center gap-3 text-gray-600">📋 칸반</a>
+      <a href="chat.html" class="flex items-center gap-3 text-teal-600 font-medium">💬 채팅</a>
+      <a href="members.html" class="flex items-center gap-3 text-gray-600">👥 팀 멤버</a>
       <button onclick="doLogout()" class="flex items-center gap-3 text-gray-600 mt-auto">🚪 로그아웃</button>
     </div>
   </div>
@@ -57,11 +57,11 @@
     </div>
   </div>
 
-  <script src="/static/js/auth.js"></script>
+  <script src="js/auth.js"></script>
   <script>
     requireAuth();
     const user = getUser();
-    if (!user?.team_id) window.location.href = '/static/team.html';
+    if (!user?.team_id) window.location.href = 'team.html';
     const teamId = user.team_id;
 
     document.getElementById('userEmail').textContent = user.email;
@@ -179,7 +179,7 @@
 
     async function doLogout() {
       await apiFetch('/auth/logout', { method: 'POST' });
-      removeToken(); removeUser(); window.location.href = '/static/login.html';
+      removeToken(); removeUser(); window.location.href = 'login.html';
     }
 
     loadTeam();
